@@ -15,7 +15,7 @@ type TestCase struct {
 
 var mdStandard = goldmark.New(
 	goldmark.WithExtensions(
-		&SectionWrapper{},
+		NewSectionWrapper(),
 	),
 )
 
@@ -23,6 +23,35 @@ var mdWithHeadingClass = goldmark.New(
 	goldmark.WithExtensions(
 		NewSectionWrapper(
             WithHeadingClass(true),
+        ),
+	),
+)
+
+var mdWithCustomClassPrefix = goldmark.New(
+	goldmark.WithExtensions(
+		NewSectionWrapper(
+			WithSectionClass(false),
+            WithCustomClassPrefix("custom-"),
+        ),
+	),
+)
+
+var mdWithCustomClass = goldmark.New(
+	goldmark.WithExtensions(
+		NewSectionWrapper(
+			WithSectionClass(false),
+            WithCustomClass("custom-class"),
+        ),
+	),
+)
+
+var mdWithAllOptions = goldmark.New(
+	goldmark.WithExtensions(
+		NewSectionWrapper(
+			WithSectionClass(true),
+			WithHeadingClass(true),
+			WithCustomClassPrefix("custom-"),
+            WithCustomClass("custom-class"),
         ),
 	),
 )
@@ -49,9 +78,168 @@ func TestSectionWrapperWithHeadingClass(t *testing.T) {
 	}
 }
 
+func TestSectionWrapperWithCustomClassPrefix(t *testing.T) {
+	for i, c := range casesCustomClassPrefix {
+		testutil.DoTestCase(mdWithCustomClassPrefix, testutil.MarkdownTestCase{
+			No:          i,
+			Description: c.desc,
+			Markdown:    c.md,
+			Expected:    c.html,
+		}, t)
+	}
+}
+
+func TestSectionWrapperWithCustomClass(t *testing.T) {
+	for i, c := range casesCustomClass {
+		testutil.DoTestCase(mdWithCustomClass, testutil.MarkdownTestCase{
+			No:          i,
+			Description: c.desc,
+			Markdown:    c.md,
+			Expected:    c.html,
+		}, t)
+	}
+}
+
+func TestSectionWrapperWithAllOptions(t *testing.T) {
+	for i, c := range casesWithAllOptions {
+		testutil.DoTestCase(mdWithAllOptions, testutil.MarkdownTestCase{
+			No:          i,
+			Description: c.desc,
+			Markdown:    c.md,
+			Expected:    c.html,
+		}, t)
+	}
+}
+
+var casesWithAllOptions = [...]TestCase{
+	{
+		desc: "All Options - Basic section wrapper with a paragraph",
+		md:   `# Section 1
+This is a paragraph in section 1.`,
+		html: `<section class="section-h1 h1 custom-h1 custom-class"><h1>Section 1</h1>
+<p>This is a paragraph in section 1.</p>
+</section>`,
+	},
+	{
+		desc: "All Options - Wrap multiple sections -- nested levels",
+		md:   `# Title
+
+## Section 1
+
+This is a paragraph in section 1.
+
+## Section 2
+
+This is a paragraph in section 2.
+
+### Section 2.1
+
+This is a paragraph in section 2.1.
+
+## Section 3
+
+This is a paragraph in section 3.
+`,
+		html: `<section class="section-h1 h1 custom-h1 custom-class"><h1>Title</h1>
+<section class="section-h2 h2 custom-h2 custom-class"><h2>Section 1</h2>
+<p>This is a paragraph in section 1.</p>
+</section><section class="section-h2 h2 custom-h2 custom-class"><h2>Section 2</h2>
+<p>This is a paragraph in section 2.</p>
+<section class="section-h3 h3 custom-h3 custom-class"><h3>Section 2.1</h3>
+<p>This is a paragraph in section 2.1.</p>
+</section></section><section class="section-h2 h2 custom-h2 custom-class"><h2>Section 3</h2>
+<p>This is a paragraph in section 3.</p>
+</section></section>`,
+	},
+}
+
+var casesCustomClass = [...]TestCase{
+	{
+		desc: "Custom Class - Basic section wrapper with a paragraph",
+		md:   `# Section 1
+This is a paragraph in section 1.`,
+		html: `<section class="custom-class"><h1>Section 1</h1>
+<p>This is a paragraph in section 1.</p>
+</section>`,
+	},
+	{
+		desc: "Custom Class - Wrap multiple sections -- nested levels",
+		md:   `# Title
+
+## Section 1
+
+This is a paragraph in section 1.
+
+## Section 2
+
+This is a paragraph in section 2.
+
+### Section 2.1
+
+This is a paragraph in section 2.1.
+
+## Section 3
+
+This is a paragraph in section 3.
+`,
+		html: `<section class="custom-class"><h1>Title</h1>
+<section class="custom-class"><h2>Section 1</h2>
+<p>This is a paragraph in section 1.</p>
+</section><section class="custom-class"><h2>Section 2</h2>
+<p>This is a paragraph in section 2.</p>
+<section class="custom-class"><h3>Section 2.1</h3>
+<p>This is a paragraph in section 2.1.</p>
+</section></section><section class="custom-class"><h2>Section 3</h2>
+<p>This is a paragraph in section 3.</p>
+</section></section>`,
+	},
+}
+
+var casesCustomClassPrefix = [...]TestCase{
+	{
+		desc: "Custom Class Prefix - Basic section wrapper with a paragraph",
+		md:   `# Section 1
+This is a paragraph in section 1.`,
+		html: `<section class="custom-h1"><h1>Section 1</h1>
+<p>This is a paragraph in section 1.</p>
+</section>`,
+	},
+	{
+		desc: "Custom Class Prefix - Wrap multiple sections -- nested levels",
+		md:   `# Title
+
+## Section 1
+
+This is a paragraph in section 1.
+
+## Section 2
+
+This is a paragraph in section 2.
+
+### Section 2.1
+
+This is a paragraph in section 2.1.
+
+## Section 3
+
+This is a paragraph in section 3.
+`,
+		html: `<section class="custom-h1"><h1>Title</h1>
+<section class="custom-h2"><h2>Section 1</h2>
+<p>This is a paragraph in section 1.</p>
+</section><section class="custom-h2"><h2>Section 2</h2>
+<p>This is a paragraph in section 2.</p>
+<section class="custom-h3"><h3>Section 2.1</h3>
+<p>This is a paragraph in section 2.1.</p>
+</section></section><section class="custom-h2"><h2>Section 3</h2>
+<p>This is a paragraph in section 3.</p>
+</section></section>`,
+	},
+}
+
 var casesWithHeadingClass = [...]TestCase{
 	{
-		desc: "Basic section wrapper with a paragraph",
+		desc: "With Heading Class - Basic section wrapper with a paragraph",
 		md:   `# Section 1
 This is a paragraph in section 1.`,
 		html: `<section class="section-h1 h1"><h1>Section 1</h1>
@@ -59,7 +247,7 @@ This is a paragraph in section 1.`,
 </section>`,
 	},
 	{
-		desc: "Wrap multiple sections -- nested levels",
+		desc: "With Heading Class - Wrap multiple sections -- nested levels",
 		md:   `# Title
 
 ## Section 1
@@ -87,7 +275,7 @@ This is a paragraph in section 3.
 <p>This is a paragraph in section 2.1.</p>
 </section></section><section class="section-h2 h2"><h2>Section 3</h2>
 <p>This is a paragraph in section 3.</p>
-</section ></section>`,
+</section></section>`,
 	},
 }
 
