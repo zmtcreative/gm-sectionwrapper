@@ -21,9 +21,9 @@ var mdStandard = goldmark.New(
 
 var mdWithHeadingClass = goldmark.New(
 	goldmark.WithExtensions(
-		&SectionWrapper{
-            useHeadingClass: true,
-        },
+		NewSectionWrapper(
+            WithHeadingClass(true),
+        ),
 	),
 )
 
