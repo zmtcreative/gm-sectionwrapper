@@ -13,47 +13,10 @@ type TestCase struct {
 	html string
 }
 
+// Run tests with standard default options
+// This will use the default settings of the SectionWrapper using the SectionWrapper variable
 var mdStandard = goldmark.New(
-	goldmark.WithExtensions(
-		NewSectionWrapper(),
-	),
-)
-
-var mdWithHeadingClass = goldmark.New(
-	goldmark.WithExtensions(
-		NewSectionWrapper(
-            WithHeadingClass(true),
-        ),
-	),
-)
-
-var mdWithCustomClassPrefix = goldmark.New(
-	goldmark.WithExtensions(
-		NewSectionWrapper(
-			WithSectionClass(false),
-            WithCustomClassPrefix("custom-"),
-        ),
-	),
-)
-
-var mdWithCustomClass = goldmark.New(
-	goldmark.WithExtensions(
-		NewSectionWrapper(
-			WithSectionClass(false),
-            WithCustomClass("custom-class"),
-        ),
-	),
-)
-
-var mdWithAllOptions = goldmark.New(
-	goldmark.WithExtensions(
-		NewSectionWrapper(
-			WithSectionClass(true),
-			WithHeadingClass(true),
-			WithCustomClassPrefix("custom-"),
-            WithCustomClass("custom-class"),
-        ),
-	),
+	goldmark.WithExtensions(SectionWrapper),
 )
 
 func TestSectionWrapperStandard(t *testing.T) {
@@ -67,6 +30,15 @@ func TestSectionWrapperStandard(t *testing.T) {
 	}
 }
 
+// Run tests with heading class option
+var mdWithHeadingClass = goldmark.New(
+	goldmark.WithExtensions(
+		NewSectionWrapper(
+            WithHeadingClass(true),
+        ),
+	),
+)
+
 func TestSectionWrapperWithHeadingClass(t *testing.T) {
 	for i, c := range casesWithHeadingClass {
 		testutil.DoTestCase(mdWithHeadingClass, testutil.MarkdownTestCase{
@@ -77,6 +49,16 @@ func TestSectionWrapperWithHeadingClass(t *testing.T) {
 		}, t)
 	}
 }
+
+// Run tests with custom class prefix option
+var mdWithCustomClassPrefix = goldmark.New(
+	goldmark.WithExtensions(
+		NewSectionWrapper(
+			WithSectionClass(false),
+            WithCustomClassPrefix("custom-"),
+        ),
+	),
+)
 
 func TestSectionWrapperWithCustomClassPrefix(t *testing.T) {
 	for i, c := range casesCustomClassPrefix {
@@ -89,6 +71,16 @@ func TestSectionWrapperWithCustomClassPrefix(t *testing.T) {
 	}
 }
 
+// Run tests with custom class option
+var mdWithCustomClass = goldmark.New(
+	goldmark.WithExtensions(
+		NewSectionWrapper(
+			WithSectionClass(false),
+            WithCustomClass("custom-class"),
+        ),
+	),
+)
+
 func TestSectionWrapperWithCustomClass(t *testing.T) {
 	for i, c := range casesCustomClass {
 		testutil.DoTestCase(mdWithCustomClass, testutil.MarkdownTestCase{
@@ -99,6 +91,18 @@ func TestSectionWrapperWithCustomClass(t *testing.T) {
 		}, t)
 	}
 }
+
+// Run tests with all options enabled
+var mdWithAllOptions = goldmark.New(
+	goldmark.WithExtensions(
+		NewSectionWrapper(
+			WithSectionClass(true),
+			WithHeadingClass(true),
+			WithCustomClassPrefix("custom-"),
+            WithCustomClass("custom-class"),
+        ),
+	),
+)
 
 func TestSectionWrapperWithAllOptions(t *testing.T) {
 	for i, c := range casesWithAllOptions {
