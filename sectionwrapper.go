@@ -101,26 +101,43 @@ func (t *sectionTransformer) processChildren(parent ast.Node, baseLevel int) {
 	}
 }
 
-// // sectionHTMLRenderer renders SectionNode to HTML
-// type sectionHTMLRenderer struct{}
+// sectionHTMLRenderer renders SectionNode to HTML
+type sectionHTMLRenderer struct {
+    extension *sectionWrapper
+}
 
-// // RegisterFuncs registers rendering functions
-// func (r *sectionHTMLRenderer) RegisterFuncs(reg renderer.NodeRendererFuncRegisterer) {
-// 	reg.Register(KindSection, r.renderSection)
-// }
+// RegisterFuncs registers rendering functions
+func (r *sectionHTMLRenderer) RegisterFuncs(reg renderer.NodeRendererFuncRegisterer) {
+    reg.Register(KindSection, r.renderSection)
+}
 
-// // renderSection renders a SectionNode
-// func (r *sectionHTMLRenderer) renderSection(w util.BufWriter, source []byte, node ast.Node, entering bool) (ast.WalkStatus, error) {
-// 	sec := node.(*SectionNode)
-// 	if entering {
-// 		_, _ = w.WriteString(`<section class="section-h`)
-// 		_, _ = w.WriteString(strconv.Itoa(sec.Level))
-// 		_, _ = w.WriteString(`">`)
-// 	} else {
-// 		_, _ = w.WriteString("</section>")
-// 	}
-// 	return ast.WalkContinue, nil
-// }
+// renderSection renders a SectionNode
+func (r *sectionHTMLRenderer) renderSection(w util.BufWriter, source []byte, node ast.Node, entering bool) (ast.WalkStatus, error) {
+    sec := node.(*SectionNode)
+    if entering {
+        hLevel := strconv.Itoa(sec.Level)
+        classString := ""
+        _, _ = w.WriteString(`<section class="`)
+        if r.extension.useSectionClass {
+            classString += ` section-h` + hLevel
+        }
+        if r.extension.useHeadingClass {
+            classString += ` h` + hLevel
+        }
+        if r.extension.customClassPrefix != "" {
+            classString += ` ` + r.extension.customClassPrefix + `h` + hLevel
+        }
+        if r.extension.customClass != "" {
+            classString += ` ` + r.extension.customClass
+        }
+        classString = string(util.TrimLeftSpace([]byte(classString)))
+        _, _ = w.WriteString(classString)
+        _, _ = w.WriteString(`">`)
+    } else {
+        _, _ = w.WriteString("</section>")
+    }
+    return ast.WalkContinue, nil
+}
 
 // sectionWrapper extends Goldmark to support sections
 type sectionWrapper struct {
@@ -179,43 +196,8 @@ func NewSectionWrapper(options ...SectionWrapperOption) *sectionWrapper {
     return sw
 }
 
-// sectionHTMLRenderer renders SectionNode to HTML
-type sectionHTMLRenderer struct {
-    extension *sectionWrapper
-}
-
-// RegisterFuncs registers rendering functions
-func (r *sectionHTMLRenderer) RegisterFuncs(reg renderer.NodeRendererFuncRegisterer) {
-    reg.Register(KindSection, r.renderSection)
-}
-
-// renderSection renders a SectionNode
-func (r *sectionHTMLRenderer) renderSection(w util.BufWriter, source []byte, node ast.Node, entering bool) (ast.WalkStatus, error) {
-    sec := node.(*SectionNode)
-    if entering {
-        hLevel := strconv.Itoa(sec.Level)
-        classString := ""
-        _, _ = w.WriteString(`<section class="`)
-        if r.extension.useSectionClass {
-            classString += ` section-h` + hLevel
-        }
-        if r.extension.useHeadingClass {
-            classString += ` h` + hLevel
-        }
-        if r.extension.customClassPrefix != "" {
-            classString += ` ` + r.extension.customClassPrefix + `h` + hLevel
-        }
-        if r.extension.customClass != "" {
-            classString += ` ` + r.extension.customClass
-        }
-        classString = string(util.TrimLeftSpace([]byte(classString)))
-        _, _ = w.WriteString(classString)
-        _, _ = w.WriteString(`">`)
-    } else {
-        _, _ = w.WriteString("</section>")
-    }
-    return ast.WalkContinue, nil
-}
+// SectionWrapper is the default instance of sectionWrapper with default settings
+var SectionWrapper = NewSectionWrapper()
 
 // Extend implements the goldmark.Extender interface
 func (e *sectionWrapper) Extend(m goldmark.Markdown) {
