@@ -5,7 +5,7 @@
 ![GitHub commit activity](https://img.shields.io/github/commit-activity/w/ZMT-Creative/gm-sectionwrapper)
 ![GitHub Tag](https://img.shields.io/github/v/tag/ZMT-Creative/gm-sectionwrapper?include_prereleases&sort=semver)
 
-A Goldmark extension that automatically wraps headings and their content in HTML `<section>` elements with proper nesting. This extension transforms your Markdown document structure into semantic HTML sections, making it easier to style and navigate.
+This is a Goldmark extension that automatically wraps headings and their content in HTML `<section>` elements with proper nesting. This extension transforms your Markdown document structure into semantic HTML sections, making it easier to style and navigate.
 
 ## Installation
 
@@ -23,7 +23,7 @@ import (
     "fmt"
 
     "github.com/yuin/goldmark"
-    "github.com/ZMT-Creative/gm-sectionwrapper"
+    sectionwrapper "github.com/ZMT-Creative/gm-sectionwrapper"
 )
 
 func main() {
@@ -57,6 +57,17 @@ More content here.`
 </section></section>
 ```
 
+### Alternative Initialization Method
+
+If you just want the default behavior without any options (*i.e., just use the `section-h?` class
+in the HTML output*) you can also initialize the extension using the following method:
+
+```go
+    md := goldmark.New(
+        goldmark.WithExtensions(sectionwrapper.SectionWrapper),
+    )
+```
+
 ## Configuration Options
 
 The extension provides several configuration options through functional options:
@@ -84,7 +95,7 @@ md := goldmark.New(
 Controls whether to add `h{level}` classes to section elements.
 
 - **Default:** `false`
-- **Example:** `h1`, `h2`, etc.
+- **Example Class Entry:** `h1`, `h2`, etc.
 
 ```go
 // Enable heading-level classes
@@ -102,7 +113,7 @@ md := goldmark.New(
 Adds a custom prefix followed by the heading level to section elements.
 
 - **Default:** `""` (empty)
-- **Example:** With prefix `"custom-"` → `custom-h1`, `custom-h2`, etc.
+- **Example Class Entry:** With prefix `"custom-"` => `custom-h1`, `custom-h2`, etc.
 
 ```go
 // Add custom prefix
@@ -120,7 +131,7 @@ md := goldmark.New(
 Adds a fixed custom class to all section elements regardless of heading level.
 
 - **Default:** `""` (empty)
-- **Example:** `"content-section"`
+- **Example Class Entry:** `"content-section"`
 
 ```go
 // Add custom class to all sections
@@ -133,7 +144,7 @@ md := goldmark.New(
 )
 ```
 
-## Combining Options
+### Combining Options
 
 You can combine multiple options:
 
@@ -224,9 +235,19 @@ sectionwrapper.NewSectionWrapper(
 
 ## Compatibility Warning
 
-⚠️ **Important:** This extension has not been extensively tested with other Goldmark extensions and may interfere with their functionality. The extension transforms the AST structure by wrapping headings in section nodes, which could potentially conflict with other extensions that also modify heading behavior or document structure.
+Unit tests have been created with this extension, and it currently passes all the tests. This
+includes tests with the built-in Goldmark extensions (`extension.GFM`, `extension.DefinitionList`,
+and `extension.Footnote`). However, this does not guarantee the extension will work with any other
+extensions.
 
-If you encounter issues when using this extension alongside others, please test with the extensions individually to identify conflicts.
+> [!Important]
+>
+> This extension transforms the AST structure by wrapping headings in section nodes, which could
+> potentially conflict with other extensions that also modify heading behavior or document
+> structure.
+
+If you encounter issues when using this extension alongside others, please test with the extensions
+individually to identify conflicts.
 
 ## License
 
