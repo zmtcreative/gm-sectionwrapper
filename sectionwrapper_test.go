@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/yuin/goldmark"
+	"github.com/yuin/goldmark/extension"
 	"github.com/yuin/goldmark/testutil"
 )
 
@@ -22,6 +23,27 @@ var mdStandard = goldmark.New(
 func TestSectionWrapperStandard(t *testing.T) {
 	for i, c := range casesStandard {
 		testutil.DoTestCase(mdStandard, testutil.MarkdownTestCase{
+			No:          i,
+			Description: c.desc,
+			Markdown:    c.md,
+			Expected:    c.html,
+		}, t)
+	}
+}
+
+// Run tests with standard options with GFM and PHP Markdown extensions
+var mdStandardWithGFM = goldmark.New(
+	goldmark.WithExtensions(
+		SectionWrapper,
+		extension.GFM,
+		extension.DefinitionList,
+		extension.Footnote,
+	),
+)
+
+func TestSectionWrapperStandardWithGFM(t *testing.T) {
+	for i, c := range casesStandard {
+		testutil.DoTestCase(mdStandardWithGFM, testutil.MarkdownTestCase{
 			No:          i,
 			Description: c.desc,
 			Markdown:    c.md,
