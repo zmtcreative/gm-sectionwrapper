@@ -1,4 +1,4 @@
-module github.com/ZMT-Creative/gm-sectionwrapper
+module github.com/zmtcreative/gm-sectionwrapper
 
 go 1.22
 

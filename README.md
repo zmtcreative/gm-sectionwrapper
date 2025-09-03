@@ -1,16 +1,16 @@
 # Goldmark Section Wrapper Extension
 
-![GitHub go.mod Go version](https://img.shields.io/github/go-mod/go-version/ZMT-Creative/gm-sectionwrapper)
-![GitHub License](https://img.shields.io/github/license/ZMT-Creative/gm-sectionwrapper)
-![GitHub commit activity](https://img.shields.io/github/commit-activity/w/ZMT-Creative/gm-sectionwrapper)
-![GitHub Tag](https://img.shields.io/github/v/tag/ZMT-Creative/gm-sectionwrapper?include_prereleases&sort=semver)
+![GitHub go.mod Go version](https://img.shields.io/github/go-mod/go-version/zmtcreative/gm-sectionwrapper)
+![GitHub License](https://img.shields.io/github/license/zmtcreative/gm-sectionwrapper)
+![GitHub commit activity](https://img.shields.io/github/commit-activity/w/zmtcreative/gm-sectionwrapper)
+![GitHub Tag](https://img.shields.io/github/v/tag/zmtcreative/gm-sectionwrapper?include_prereleases&sort=semver)
 
 This is a Goldmark extension that automatically wraps headings and their content in HTML `<section>` elements with proper nesting. This extension transforms your Markdown document structure into semantic HTML sections, making it easier to style and navigate.
 
 ## Installation
 
 ```bash
-go get github.com/ZMT-Creative/gm-sectionwrapper
+go get github.com/zmtcreative/gm-sectionwrapper
 ```
 
 ## Basic Usage
@@ -23,7 +23,7 @@ import (
     "fmt"
 
     "github.com/yuin/goldmark"
-    sectionwrapper "github.com/ZMT-Creative/gm-sectionwrapper"
+    sectionwrapper "github.com/zmtcreative/gm-sectionwrapper"
 )
 
 func main() {
